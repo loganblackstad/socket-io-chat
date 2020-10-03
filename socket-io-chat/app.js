@@ -42,7 +42,7 @@ const socketMiddleware = session({
     resave: false,
     saveUninitialized: true,
     cookie: {
-      // secure: true,
+        // secure: true,
         maxAge: 31536000000,
     }
 });
@@ -67,37 +67,38 @@ app.get('/', (req, res) => {
 
 app.get('/logout', function (req, res, next) {
     if (req.session) {
-        req.session.destroy(function(err) {
-        if(err) {
-            return next(err);
-        } else {
-            return res.redirect('/');
-        }
-    });
+        req.session.destroy(function (err) {
+            if (err) {
+                return next(err);
+            } else {
+                return res.redirect('/');
+            }
+        });
     }
 })
 
 app.get('/mainroom', checkAuthentication, (req, res) => {
     const username = req.session.user.username
-    db.User.findOne( {where: { username: username } })
-    .then((User) => {
-        res.render('mainchat', {
-            title: 'ZDG Chat Main Room',
-            name: username
+    db.User.findOne({ where: { username: username } })
+        .then((User) => {
+            res.render('mainchat', {
+                title: 'ZDG Chat Main Room',
+                name: username
+            })
         })
-    })
 });
 
 app.get('/codingroom', function (req, res, next) {
     const username = req.session.user.username
-    db.User.findOne( {where: { username: username } })
+    db.User.findOne({ where: { username: username } })
     db.Message.findAll({
         where: {
             RoomId: 1
-        }, 
+        },
         include: [
             db.User
-        ]})
+        ]
+    })
         .then((results) => {
             res.render('codingchat', {
                 title: 'Coding Room',
@@ -105,46 +106,47 @@ app.get('/codingroom', function (req, res, next) {
                 name: username
             })
         })
-    
+
 })
 
 app.get('/atlantaroom', function (req, res, next) {
     const username = req.session.user.username
-    db.User.findOne( {where: { username: username } })
+    db.User.findOne({ where: { username: username } })
     db.Message.findAll({
         where: {
             RoomId: 3
-        }, 
-        include: [
-            db.User
-        ]})
-    .then((results) => {
-        res.render('atlantachat', {
-            title: 'Atlanta Room',
-            messages: results,
-            name: username
-        })
-    })
-});
-
-app.get('/petroom', function (req, res, next) {
-    const username = req.session.user.username
-    db.User.findOne( {where: { username: username } })
-    db.Message.findAll({
-        where: {
-            RoomId: 2
-        }, 
+        },
         include: [
             db.User
         ]
     })
-    .then((results) => {
-        res.render('petchat', {
-            title: 'Pet Room',
-            messages: results,
-            name: username
+        .then((results) => {
+            res.render('atlantachat', {
+                title: 'Atlanta Room',
+                messages: results,
+                name: username
+            })
         })
+});
+
+app.get('/petroom', function (req, res, next) {
+    const username = req.session.user.username
+    db.User.findOne({ where: { username: username } })
+    db.Message.findAll({
+        where: {
+            RoomId: 2
+        },
+        include: [
+            db.User
+        ]
     })
+        .then((results) => {
+            res.render('petchat', {
+                title: 'Pet Room',
+                messages: results,
+                name: username
+            })
+        })
 });
 
 app.get('/private', (req, res) => {
@@ -160,7 +162,7 @@ app.post('/signup', (req, res) => {
     bcrypt.hash(password, 10, (err, hash) => {
         db.User.create({
             username: username,
-            email: email, 
+            email: email,
             password: hash,
         }).then((result) => {
             res.redirect('/');
@@ -170,7 +172,7 @@ app.post('/signup', (req, res) => {
 
 app.post('/signin', (req, res) => {
     const { username, password } = req.body;
-    db.User.findOne( {where: { username: username } })
+    db.User.findOne({ where: { username: username } })
         .then(User => {
             bcrypt.compare(password, User.password, (err, match) => {
                 if (match) {
@@ -197,7 +199,7 @@ io.on('connection', (socket) => {
     if (socket.request.session.user) {
         name = socket.request.session.user.username
         id = socket.request.session.user.userID
-        socket.on('join', (room) => {  
+        socket.on('join', (room) => {
             people[id] = { name, room };
             sockets[id] = socket.id;
             socket.emit('chat message', `You have joined ZDG chat. Hi ${people[id].name}!`);
@@ -228,7 +230,7 @@ io.on('connection', (socket) => {
         socket.on('pet message', (data) => {
             db.Message.create({
                 content: data,
-                RoomId: 2, 
+                RoomId: 2,
                 UserId: id,
             }).then((result) => {
                 io.emit('pet message', `<span class="dbusername">${name}</span>: ${data}`);
@@ -238,7 +240,7 @@ io.on('connection', (socket) => {
         socket.on('Atlanta message', (data) => {
             db.Message.create({
                 content: data,
-                RoomId: 3, 
+                RoomId: 3,
                 UserId: id,
             }).then((result) => {
                 io.emit('Atlanta message', `<span class="dbusername">${name}</span>: ${data}`);
@@ -248,19 +250,19 @@ io.on('connection', (socket) => {
         socket.on('coding message', (data) => {
             db.Message.create({
                 content: data,
-                RoomId: 1, 
+                RoomId: 1,
                 UserId: id,
             }).then((result) => {
                 io.emit('coding message', `<span class="dbusername">${name}</span>: ${data}`);
             });
         });
-    
+
         socket.on('typing', (data) => {
             if (data.typing == true) {
-            data.user = name;
-            io.emit('display', data)
+                data.user = name;
+                io.emit('display', data)
             } else {
-            io.emit('display', data);
+                io.emit('display', data);
             }
         })
     };
