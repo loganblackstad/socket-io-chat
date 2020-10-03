@@ -1,0 +1,65 @@
+h1 {
+  font-family: Arial;
+  font-size: 50px;
+  color: royalblue;
+}
+
+h2, .number {
+  color: royalblue;
+}
+
+.dbusername {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.center {
+  margin: 0 auto;
+}
+
+.bg-color {
+  background-color: lightgrey;
+}
+
+section {
+  height: 85vh;
+  width: 100%;
+}
+
+#onlineUsers {
+  width: 30%;
+  height: 100%;
+}
+
+#mainChat {
+  width: 70%;
+  height: 100%;
+}
+
+#chatHeader {
+  height: 7%;
+}
+
+#chatBody {
+  height: 83%;
+}
+
+#chatInput {
+  height: 10%;
+}
+
+.typing {
+  height: 30%;
+}
+
+.chat-form {
+  height: 50%;
+}
+
+#onlineHeader {
+  height: 7%;
+}
+
+#users {
+  height: 93%;
+}
