@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
         res.redirect('/mainroom')
     } else {
         res.render('index', {
-            title: 'Welcome to ZDG Chat',
+            title: 'Welcome to a Simple Socket IO Chat',
         })
     }
 })
@@ -82,7 +82,7 @@ app.get('/mainroom', checkAuthentication, (req, res) => {
     db.User.findOne({ where: { username: username } })
         .then((User) => {
             res.render('mainchat', {
-                title: 'ZDG Chat Main Room',
+                title: 'Socket IO Chat Main Room',
                 name: username
             })
         })
@@ -202,7 +202,7 @@ io.on('connection', (socket) => {
         socket.on('join', (room) => {
             people[id] = { name, room };
             sockets[id] = socket.id;
-            socket.emit('chat message', `You have joined ZDG chat. Hi ${people[id].name}!`);
+            socket.emit('chat message', `You have joined a Socket IO chat. Hi ${people[id].name}!`);
             // socket.broadcast.emit('chat message', `${people[id].name} has joined the ${room}.`)
             io.emit('emitParticipants', people);
         });
